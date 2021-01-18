@@ -3,6 +3,9 @@
 # A script that is made to pull and execute on the computer of a colleague that
 # has forgotten to lock his computer.
 
+#TO DO
+# Set URI path to correct user by variable (see set_background function) 
+
 
 # Picks a function to be executed when the script is run.
 pick_selection () {
@@ -16,7 +19,7 @@ do
             please
             ;;
         "matrix terminal")
-            matrix
+            matrix cmatrix
             ;;
         "set background")
             set_background
@@ -25,7 +28,9 @@ do
             backToNormal
             ;;
         "Quit")
-            echo "Stopping the program"
+            history -c #Cleans the history command
+            source ~/.bashrc
+            clear
             break
             ;;
         *) echo "invalid option \"$REPLY"\";;
@@ -37,6 +42,8 @@ done
 # A function that requires all the basic commands to be preappended by the word "please" 
 please () {
   #commands
+  alias ls='echo please_ls'
+  alias please_ls="ls -F"
   echo "this is the please function"
   return 
 }
@@ -46,35 +53,42 @@ matrix () {
   if ! command -v cmatrix &> /dev/null; then
     sudo apt-get install cmatrix & sudo apt-get install cmatrix-font
   else
-    cmatrix
+    echo "alias ls='cmatrix'" >> ~/.bashrc
+    echo "alias cd='cmatrix'" >> ~/.bashrc
+    echo "alias pwd='cmatrix'" >> ~/.bashrc
+    source ~/.bashrc
+    # alias ls='cmatrix'
+    # alias cd='cmatrix'
+    # alias pwd='cmatrix'
+    echo "this is the cmatrix function"
   fi
 }
- 
-# A function that sets the standard commands to different aliases
-set_alias () {
-     #args : string firstName
-  echo "this is the set alias function"
-}
 
-
-
+# Set a random desktop background
 set_background () {
-   echo "this is the background function" 
-   # Set the game.jpg as background
+    r=$(( ( RANDOM % 7 )  + 1 ))
+    echo $r
+    return gsettings set org.gnome.desktop.background picture-uri file:////home/loran/Documents/red/unlocked/game5.jpeg
+    # echo 'file:////home/loran/Documents/red/unlocked/game"${r}".jpeg'
 }
 
 # returns everything back to normal
 backToNormal () {
+  echo "alias ls='ls'" >> ~/.bashrc
+  echo "alias cd='cd'" >> ~/.bashrc
+  echo "alias pwd='pwd'" >> ~/.bashrc
+  source ~/.bashrc
+#   alias ls='ls'
+#   alias cd='cd'
+#   alias pwd='pwd'
   echo "this is the back to normal function" 
 }
+
 
 # Assign variables to methods
 ISHOULDKNOWBETTERANDFEELBADABOUTMYACTIONS=$(backToNormal)
 
-# Start of the script
+# Start script
 pick_selection
 
-echo $ISHOULDKNOWBETTERANDFEELBADABOUTMYACTIONS
 
-# removes bash command history, so there are no signs that this script has been run
-cat /dev/null > ~/.bash_history && history -c
