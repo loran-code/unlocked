@@ -5,7 +5,7 @@
 
 #TO DO
 # Set URI path to correct user by variable (see set_background function) 
-
+CURRENTDIR=$(pwd)
 
 # Picks a function to be executed when the script is run.
 pick_selection () {
@@ -22,7 +22,7 @@ do
             matrix cmatrix
             ;;
         "set background")
-            set_background
+            background
             ;;
         "return to normal")
             backToNormal
@@ -65,12 +65,45 @@ matrix () {
 }
 
 # Set a random desktop background
-set_background () {
-    r=$(( ( RANDOM % 7 )  + 1 ))
-    echo $r
-    return gsettings set org.gnome.desktop.background picture-uri file:////home/loran/Documents/red/unlocked/game5.jpeg
-    # echo 'file:////home/loran/Documents/red/unlocked/game"${r}".jpeg'
+background () {
+
+	DPMG="$(checkDisto)"
+	if [[ -z $DPMG ]]; then
+		echo "Displaymanager is not recognized"
+	else
+		RANDNUM=$(( $RANDOM %7))
+		IMGTOSET=$CURRENTDIR"/game"$RANDNUM".jpeg"
+
+		case $DPMG in
+			"kali")
+                         	xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitorVirtual1/workspace0/last-image -s $IMGTOSET
+			  	;;
+		        "ubuntu")
+			      	gsettings set org.gnome.desktop.background picture-uri file:///$IMGTOSET	
+				;;
+			*) echo $DPMG
+				;;
+		esac
+	fi
 }
+
+
+checkDisto () {
+	KALIORUBUNTU=$(uname -a | awk '{print $3}' | awk -F- '{print $2}')
+	if [[ $KALIORUBUNTU == "kali5" ]]; then
+		echo "kali"
+	else
+		KALIORUBUNTU=$(uname -a | awk '{print $4}' | awk -F- '{print $2}')
+	fi
+
+	if [[ $KALIORUBUNTU == "Ubuntu" ]]; then
+		echo "ubuntu"
+	fi
+}
+
+
+
+
 
 # returns everything back to normal
 backToNormal () {
