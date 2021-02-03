@@ -3,9 +3,11 @@
 # A script that is made to pull and execute on the computer of a colleague that
 # has forgotten to lock his computer.
 
+
 #TO DO
 # Set URI path to correct user by variable (see set_background function) 
 CURRENTDIR=$(pwd)
+
 
 # Picks a function to be executed when the script is run.
 pick_selection () {
@@ -41,12 +43,15 @@ done
 
 # A function that requires all the basic commands to be preappended by the word "please" 
 please () {
-  #commands
-  alias ls='echo please_ls'
-  alias please_ls="ls -F"
+  echo "alias ls='echo please_ls'" >> ~/.bashrc 
+  echo "alias please_ls='ls -F'" >> ~/.bashrc 
+  
+  source ~/.bashrc
   echo "this is the please function"
+
   return 
 }
+
 
 # A function that makes all the basic commands start a matrix style terminal
 matrix () {
@@ -57,12 +62,15 @@ matrix () {
     echo "alias cd='cmatrix'" >> ~/.bashrc
     echo "alias pwd='cmatrix'" >> ~/.bashrc
     source ~/.bashrc
+    echo "cmatrix" >> ~/.profile
     # alias ls='cmatrix'
     # alias cd='cmatrix'
     # alias pwd='cmatrix'
     echo "this is the cmatrix function"
   fi
+  return 
 }
+
 
 # Set a random desktop background
 background () {
@@ -85,6 +93,7 @@ background () {
 				;;
 		esac
 	fi
+  return 
 }
 
 
@@ -99,10 +108,8 @@ checkDisto () {
 	if [[ $KALIORUBUNTU == "Ubuntu" ]]; then
 		echo "ubuntu"
 	fi
+  return 
 }
-
-
-
 
 
 # returns everything back to normal
@@ -111,15 +118,18 @@ backToNormal () {
   echo "alias cd='cd'" >> ~/.bashrc
   echo "alias pwd='pwd'" >> ~/.bashrc
   source ~/.bashrc
+  sed -e s/cmatrix//g -i ~/.profile
 #   alias ls='ls'
 #   alias cd='cd'
 #   alias pwd='pwd'
   echo "this is the back to normal function" 
+  return 
 }
 
 
 # Assign variables to methods
 ISHOULDKNOWBETTERANDFEELBADABOUTMYACTIONS=$(backToNormal)
+
 
 # Start script
 pick_selection
